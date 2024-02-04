@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Cosmetics</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        #cosmetics-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cosmetic-item {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 15px;
+            width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .cosmetic-item:hover {
+            transform: scale(1.05);
+        }
+
+        .cosmetic-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .cosmetic-details {
+            color: #555555;
+        }
+
+        .cosmetic-details p {
+            margin: 5px 0;
+        }
+
+        #full-cosmetic-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        #full-cosmetic-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            overflow: auto; /* Enable scrolling */
+            position: relative;
+            max-height: 90vh; /* Set a maximum height for the full container */
+            margin: 20px; /* Add margin for better appearance */
+        }
+
+        #full-cosmetic-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #close-button,
+        #go-fullscreen-button {
+            cursor: pointer;
+        }
+
+        #redirect-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #redirect-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Fortnite Cosmetics</h1>
+
+<div id="cosmetics-container"></div>
+
+<div id="full-cosmetic-overlay">
+    <div id="full-cosmetic-container">
+        <div id="full-cosmetic-header">
+            <span id="close-button" onclick="closeFullCosmetic()">Close</span>
+            <span id="go-fullscreen-button" onclick="toggleFullScreen()">Fullscreen</span>
+        </div>
+    </div>
+</div>
+
+<button id="redirect-button" onclick="redirectToAnotherSite()">Go to AES Keys Site</button>
+
+<script>
+    async function fetchCosmetics() {
+        try {
+            const response = await fetch('https://fortnite-api.com/v2/cosmetics/br/new');
+            const data = await response.json();
+
+            if (data.status === 200) {
+                displayCosmetics(data.data.items);
+            } else {
+                throw new Error('Error fetching cosmetics data.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error fetching cosmetics data. Please try again.');
+        }
+    }
+
+    function displayCosmetics(cosmetics) {
+        const cosmeticsContainer = document.getElementById('cosmetics-container');
+
+        cosmetics.forEach(cosmetic => {
+            const cosmeticItem = document.createElement('div');
+            cosmeticItem.classList.add('cosmetic-item');
+            cosmeticItem.onclick = () => displayFullCosmetic(cosmetic);
+
+            const cosmeticImage = document.createElement('img');
+            cosmeticImage.classList.add('cosmetic-image');
+            cosmeticImage.src = cosmetic.images.icon;
+            cosmeticImage.alt = cosmetic.name;
+            cosmeticItem.appendChild(cosmeticImage);
+
+            const cosmeticDetails = document.createElement('div');
+            cosmeticDetails.classList.add('cosmetic-details');
+
+            Object.entries(cosmetic).forEach(([key, value]) => {
+                const detailElement = document.createElement('p');
+                detailElement.innerHTML = `<strong>${key}:</strong> ${isObject(value) ? JSON.stringify(value) : value}`;
+                cosmeticDetails.appendChild(detailElement);
+            });
+
+            cosmeticItem.appendChild(cosmeticDetails);
+
+            cosmeticsContainer.appendChild(cosmeticItem);
+        });
+    }
+
+    function displayFullCosmetic(cosmetic) {
+        const fullCosmeticContainer = document.getElementById('full-cosmetic-container');
+        fullCosmeticContainer.innerHTML = '';
+
+        // Create elements for full cosmetic display
+        const fullCosmeticHeader = document.createElement('div');
+        fullCosmeticHeader.id = 'full-cosmetic-header';
+        fullCosmeticHeader.innerHTML = `
+            <span id="close-button" onclick="closeFullCosmetic()">Close</span>
+            <span id="go-fullscreen-button" onclick="toggleFullScreen()">Fullscreen</span>
+        `;
+        fullCosmeticContainer.appendChild(fullCosmeticHeader);
+
+        const fullCosmeticImage = document.createElement('img');
+        fullCosmeticImage.classList.add('cosmetic-image');
+        fullCosmeticImage.src = cosmetic.images.icon;
+        fullCosmeticImage.alt = cosmetic.name;
+        fullCosmeticContainer.appendChild(fullCosmeticImage);
+
+        const fullCosmeticDetails = document.createElement('div');
+        fullCosmeticDetails.classList.add('cosmetic-details');
+
+        // Display full details of the cosmetic
+        Object.entries(cosmetic).forEach(([key, value]) => {
+            const detailElement = document.createElement('p');
+            detailElement.innerHTML = `<strong>${key}:</strong> ${isObject(value) ? JSON.stringify(value) : value}`;
+            fullCosmeticDetails.appendChild(detailElement);
+        });
+
+        // Append elements to the full cosmetic container
+        fullCosmeticContainer.appendChild(fullCosmeticImage);
+        fullCosmeticContainer.appendChild(fullCosmeticDetails);
+
+        // Show the full cosmetic overlay
+        const fullCosmeticOverlay = document.getElementById('full-cosmetic-overlay');
+        fullCosmeticOverlay.style.display = 'flex';
+    }
+
+    function isObject(value) {
+        return value && typeof value === 'object' && value.constructor === Object;
+    }
+
+    function closeFullCosmetic() {
+        const fullCosmeticOverlay = document.getElementById('full-cosmetic-overlay');
+        fullCosmeticOverlay.style.display = 'none';
+    }
+
+    function toggleFullScreen() {
+        const fullCosmeticContainer = document.getElementById('full-cosmetic-container');
+
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            fullCosmeticContainer.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        }
+    }
+
+    async function redirectToAnotherSite() {
+        window.location.href = 'file:///C:/Users/toxic/OneDrive/Έγγραφα/index.html'; // Replace with the desired URL
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeFullCosmetic();
+        }
+    });
+
+    fetchCosmetics();
+</script>
+
+</body>
+</html>
