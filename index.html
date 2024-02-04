@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Fortnite Cosmetics</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* Μικρότερο περιθώριο */
             text-align: center;
         }
 
         h1 {
             color: #333333;
-            margin-bottom: 20px;
+            margin-bottom: 10px; /* Μικρότερο περιθώριο */
         }
 
         #cosmetics-container {
@@ -25,12 +25,15 @@
         }
 
         .cosmetic-item {
+            /* Καλύτερη προσαρμογή του πλάτους */
+            width: calc(50% - 20px);
+            max-width: 300px;
+            margin: 10px;
+            box-sizing: border-box; /* Επιλύει τυχόν προβλήματα με το πλάτος */
             background-color: #ffffff;
             border: 1px solid #dddddd;
             border-radius: 8px;
-            margin: 10px;
             padding: 15px;
-            width: 200px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
             overflow: hidden;
@@ -100,9 +103,10 @@
         }
 
         #redirect-button {
+            font-size: 16px; /* Μεγαλύτερο μέγεθος κειμένου */
+            padding: 12px 24px; /* Μεγαλύτερο περιθώριο */
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -237,7 +241,7 @@
     }
 
     async function redirectToAnotherSite() {
-        window.location.href = 'https://greekninja.github.io/AES-KEYS/'; // Replace with the desired URL
+        window.location.href = 'https://greekninja.github.io/AES-KEYS/'; // Αντικατέστησε με τον επιθυμητό σύνδεσμο
     }
 
     document.addEventListener('keydown', (event) => {
